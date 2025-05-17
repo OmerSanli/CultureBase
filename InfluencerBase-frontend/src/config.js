@@ -1,1 +1,0 @@
-export const API_URL = "https://a8a84a06-82fc-4f19-9d19-cd536c42afde-00-3azbivgb2lkur.pike.replit.dev";
