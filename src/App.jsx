@@ -6,7 +6,7 @@ function App() {
   const [result, setResult] = useState(null);
 
   const handleAnalyze = async () => {
-    const res = await fetch(\`\${API_URL}/analyze\`, {
+    const res = await fetch(`${API_URL}/analyze`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username }),
