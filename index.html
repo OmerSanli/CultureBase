@@ -1,12 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>InfluencerBase</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InfluencerBase</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2em; }
+    input, button { padding: 0.5em; font-size: 1em; margin-top: 1em; }
+    .result { background: white; padding: 1em; margin-top: 2em; border-radius: 8px; }
+    .stat { margin-bottom: 0.5em; }
+  </style>
+</head>
+<body>
+  <h1>InfluencerBase</h1>
+  <p>Kullanıcı adını girerek Instagram analizine ulaş:</p>
+  <input type="text" id="username" placeholder="örnek: selena.gomez" />
+  <br/>
+  <button onclick="analyze()">Analiz Et</button>
+
+  <div class="result" id="result" style="display:none;"></div>
+
+  <script>
+    async function analyze() {
+      const username = document.getElementById("username").value.trim();
+      if (!username) return alert("Lütfen bir kullanıcı adı girin");
+
+      const resDiv = document.getElementById("result");
+      resDiv.style.display = "none";
+      resDiv.innerHTML = "Yükleniyor...";
+
+      try {
+        const response = await fetch("https://a8a84a06-82fc-4f19-9d19-cd536c42afde-00-3azbivgb2lkur.pike.replit.dev/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          resDiv.innerHTML = "<b>Hata:</b> " + data.error;
+          resDiv.style.display = "block";
+          return;
+        }
+
+        resDiv.innerHTML = `
+          <h2>${data.username}</h2>
+          <div class="stat">Takipçi Sayısı: ${data.follower_count.toLocaleString()}</div>
+          <div class="stat">Ortalama Beğeni: ${data.average_likes.toLocaleString()}</div>
+          <div class="stat">Ortalama Yorum: ${data.average_comments.toLocaleString()}</div>
+          <div class="stat">Ortalama Görüntülenme: ${data.average_views.toLocaleString()}</div>
+          <div class="stat">Gönderi Sayısı: ${data.post_count}</div>
+          <div class="stat">Reel Sayısı: ${data.reel_count}</div>
+          <div class="stat">Engagement Rate: %${data.engagement_rate}</div>
+          <div class="stat">İşbirliği İçeriği Sayısı: ${data.collaboration_count}</div>
+          <div class="stat">İşbirliği Yaptığı Markalar: ${data.last_collaborations.length ? data.last_collaborations.join(", ") : "Yok"}</div>
+        `;
+        resDiv.style.display = "block";
+
+      } catch (err) {
+        resDiv.innerHTML = "<b>Bir hata oluştu:</b> " + err.message;
+        resDiv.style.display = "block";
+      }
+    }
+  </script>
+</body>
 </html>
